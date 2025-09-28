@@ -19,7 +19,6 @@ void setup() {
 void loop() {
   // Read potentiometer
   int potVal = analogRead(potPin);  
-  Serial.print(potVal);
 
   // Read button
   if (digitalRead(majPin)) {
