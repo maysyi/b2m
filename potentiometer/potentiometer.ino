@@ -22,29 +22,40 @@ void loop() {
   Serial.print(potVal);
 
   // Read button
-  // if (digitalRead(majPin)) {
-  //   buttonState = 1; // Major
-  // } 
-  // else if (digitalRead(minPin)) {
-  //   buttonState = 2; // Minor
-  // } 
-  // else if (digitalRead(dimPin)) {
-  //   buttonState = 3; // Diminished
-  // } 
-  // else if (digitalRead(dom7Pin)) {
-  //   buttonState = 4; // Dominant 7th
-  // } 
-  // else if (digitalRead(dim7Pin)) {
-  //   buttonState = 5; // Minor 7th
-  // } 
-  // else {
-  //   buttonState = 0; // No button pressed
-  // }
-  buttonState = int(digitalRead(majPin));
-
-  Serial.print(potVal);
-  Serial.print(",");
-  Serial.println(buttonState);
-
-  delay(10); // small delay to avoid flooding serial
+  if (digitalRead(majPin)) {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(1);
+    delay(10); // small delay to avoid flooding serial
+    } 
+  else if (digitalRead(minPin)) {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(2);
+    delay(10); // small delay to avoid flooding serial
+  } 
+  else if (digitalRead(dimPin)) {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(3);
+    delay(10); // small delay to avoid flooding serial
+  } 
+  else if (digitalRead(dom7Pin)) {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(4);
+    delay(10); // small delay to avoid flooding serial
+  } 
+  else if (digitalRead(dim7Pin)) {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(5);
+    delay(10); // small delay to avoid flooding serial
+  } 
+  else {
+    Serial.print(potVal);
+    Serial.print(",");
+    Serial.println(0);
+    delay(10); // small delay to avoid flooding serial
+  }
 }

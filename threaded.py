@@ -55,7 +55,7 @@ def play_audio():
         # only treat change if stable for DEBOUNCE_MS
         stable = (now - last_change_time) >= DEBOUNCE_MS
 
-        if stable and current_button == 1 and not pressed:
+        if stable and current_button != 0 and not pressed:
             # rising edge -> enter pressed state and play note
             pressed = True
             note_name = scale_note(current_pot)
@@ -67,7 +67,7 @@ def play_audio():
                 outport.send(msg_on)
             current_note_name = note_name
             current_chord_name = chord_name
-        elif pressed and current_button == 1:
+        elif pressed and current_button != 0:
             # still pressed — check if pot changed to a different note
             note_name = scale_note(current_pot)
             if note_name != current_note_name:
