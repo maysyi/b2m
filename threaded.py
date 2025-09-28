@@ -10,36 +10,51 @@ import mido
 arduino = serial.Serial(port='COM9', baudrate=115200, timeout=0.1)
 
 outport = mido.open_output()
+outport.send(mido.Message('program_change', program=88))
 
 # Shared variables between threads
 pot_value = 0
 button_state = 0
+octave = 3
 lock = threading.Lock()
 running = True
 current_note = "X"
 
 # === Thread 1: Read Arduino ===
 def read_arduino():
-    global pot_value, button_state, running
+    global pot_value, button_state, octave, running
+    OCTAVE_DEBOUNCE_MS = 300 / 1000
+    last_octave_change_time = 0
     while running:
         line = arduino.readline().decode(errors='ignore').strip()
         if not line:
             continue
+        now = time.time()
         try:
-            pot_str, button_str = line.split(",")
-            with lock:
-                pot_value = int(pot_str.strip())
-                button_state = int(button_str.strip())
+            if line == "D" and octave > 3:
+                if now - last_octave_change_time >= OCTAVE_DEBOUNCE_MS:
+                    octave -= 1
+                    last_octave_change_time = now
+                    print("Octave down:", octave)
+            elif line == "U" and octave < 5:
+                if now - last_octave_change_time >= OCTAVE_DEBOUNCE_MS:
+                    octave += 1
+                    last_octave_change_time = now
+                    print("Octave up:", octave)
+            else:
+                pot_str, button_str = line.split(",")
+                with lock:
+                    pot_value = int(pot_str.strip())
+                    button_state = int(button_str.strip())
         except ValueError:
             continue
         time.sleep(0.005)  # small delay to reduce CPU usage
 
 # === Thread 2: Play Audio ===
 def play_audio():
-    global pot_value, button_state, running, current_note
+    global pot_value, button_state, octave, running, current_note
     pressed = False                  # are we currently in the "button held" state?
     current_note_name = None         # name for debugging
-    current_octave = 4               # you can change this or make it dynamic
     DEBOUNCE_MS = 30 / 1000.0        # 30 ms debounce
     last_button = 0
     last_change_time = time.time()
@@ -47,7 +62,7 @@ def play_audio():
         with lock:
             current_pot = pot_value
             current_button = button_state
-            current_octave = 4 # Update with button
+            current_octave = octave # Update with button
         now = time.time()
         if current_button != last_button:
             last_change_time = now
