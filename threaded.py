@@ -10,7 +10,7 @@ import mido
 arduino = serial.Serial(port='COM9', baudrate=115200, timeout=0.1)
 
 outport = mido.open_output()
-outport.send(mido.Message('program_change', program=88))
+outport.send(mido.Message('program_change', program=89))
 
 # Shared variables between threads
 pot_value = 0

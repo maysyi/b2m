@@ -1,0 +1,7 @@
+pyserial
+pyaudio
+numpy
+pandas
+scipy
+mido
+python-rtmidi
