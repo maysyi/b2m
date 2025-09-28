@@ -9,11 +9,11 @@ int buttonState = 0;
 
 void setup() {
   Serial.begin(115200);
-  pinMode(majPin, INPUT_PULLUP);
-  pinMode(minPin, INPUT_PULLUP);
-  pinMode(dimPin, INPUT_PULLUP);
-  pinMode(dom7Pin, INPUT_PULLUP);
-  pinMode(dim7Pin, INPUT_PULLUP);
+  pinMode(majPin, INPUT);
+  pinMode(minPin, INPUT);
+  pinMode(dimPin, INPUT);
+  pinMode(dom7Pin, INPUT);
+  pinMode(dim7Pin, INPUT);
 }
 
 void loop() {
@@ -22,24 +22,25 @@ void loop() {
   Serial.print(potVal);
 
   // Read button
-  if (digitalRead(majPin)) {
-    buttonState = 1; // Major
-  } 
-  else if (digitalRead(minPin)) {
-    buttonState = 2; // Minor
-  } 
-  else if (digitalRead(dimPin)) {
-    buttonState = 3; // Diminished
-  } 
-  else if (digitalRead(dom7Pin)) {
-    buttonState = 4; // Dominant 7th
-  } 
-  else if (digitalRead(dim7Pin)) {
-    buttonState = 5; // Minor 7th
-  } 
-  else {
-    buttonState = 0; // No button pressed
-  }
+  // if (digitalRead(majPin)) {
+  //   buttonState = 1; // Major
+  // } 
+  // else if (digitalRead(minPin)) {
+  //   buttonState = 2; // Minor
+  // } 
+  // else if (digitalRead(dimPin)) {
+  //   buttonState = 3; // Diminished
+  // } 
+  // else if (digitalRead(dom7Pin)) {
+  //   buttonState = 4; // Dominant 7th
+  // } 
+  // else if (digitalRead(dim7Pin)) {
+  //   buttonState = 5; // Minor 7th
+  // } 
+  // else {
+  //   buttonState = 0; // No button pressed
+  // }
+  buttonState = int(digitalRead(majPin));
 
   Serial.print(potVal);
   Serial.print(",");
