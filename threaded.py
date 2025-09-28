@@ -1,5 +1,4 @@
 import serial
-import pyaudio
 import numpy as np
 from music import scale_note, get_octave, get_chord, get_note, off_note
 import threading
@@ -7,9 +6,20 @@ import time
 import mido
 
 # === Setup Serial ===
-arduino = serial.Serial(port='COM9', baudrate=115200, timeout=0.1)
+arduino = serial.Serial(port='/dev/cu.usbmodem1401', baudrate=115200, timeout=0.1)
 
-outport = mido.open_output()
+names = mido.get_output_names()
+out_name = next((n for n in names if "DLS" in n or "Synth" in n), None)
+if not out_name:
+    # Fallback to first available real device; avoid virtual-only “Mido Output” if possible
+    out_name = names[0] if names else None
+    if not out_name:
+        raise RuntimeError(
+            "No MIDI outputs found. Open a DAW or enable IAC/Apple DLS Synth (see notes)."
+        )
+    print("Using MIDI output:", out_name)
+
+outport = mido.open_output(out_name)
 outport.send(mido.Message('program_change', program=89))
 
 # Shared variables between threads
@@ -62,7 +72,7 @@ def play_audio():
         with lock:
             current_pot = pot_value
             current_button = button_state
-            current_octave = octave # Update with button
+            current_octave = 3 # Update with button
         now = time.time()
         if current_button != last_button:
             last_change_time = now

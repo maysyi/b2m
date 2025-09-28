@@ -1,7 +1,6 @@
 import pandas as pd
 import numpy as np
 from scipy.io import wavfile
-import pyaudio
 import mido
 
 df = pd.read_csv("midi.csv")
@@ -20,6 +19,14 @@ for _, row in df2.iterrows():
     note = row["NOTE"]
     # Drop NaNs and the NOTE column itself
     chords_dict[note] = row.drop(labels=["NOTE"]).dropna().to_dict()
+
+def _to_byte(x):
+    # convert numpy/scalars/strings -> int, then clip to 0..127
+    if x is None:
+        return 0
+    else:
+        x = int(round(float(x)))
+        return max(0, min(127, x))
 
 def scale_note(pot_value):
     if pot_value < 85:
@@ -80,6 +87,7 @@ def get_note(note, midi_dict):
     if note == "Bb": note = "A#"
     if note == "Cb": note = "B"
     note_midi = midi_dict.get(note)
+    note_midi = _to_byte(note_midi)
     msg_on = mido.Message('note_on', note=note_midi, velocity=100)
     return msg_on
 
@@ -91,6 +99,7 @@ def off_note(note, midi_dict):
     if note == "Bb": note = "A#"
     if note == "Cb": note = "B"
     note_midi = midi_dict.get(note)
+    note_midi = _to_byte(note_midi)
     msg_off = mido.Message('note_off', note=note_midi, velocity=0)
     return msg_off
     
